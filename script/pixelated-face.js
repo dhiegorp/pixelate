@@ -1,13 +1,28 @@
+const optionSliders = document.querySelectorAll('.controls input[type=range]');
+
 const webcam = document.querySelector(".webcam");
 const mainCanvas = document.querySelector(".video");
 const faceCanvas = document.querySelector(".face");
-const mainContext = mainCanvas.getContext('2d');
 
+const mainContext = mainCanvas.getContext('2d');
 const faceContext = faceCanvas.getContext(`2d`);
 
 const faceDetector = new FaceDetector();
-const SIZE = 10;
-const SCALE = 1.5;
+
+
+const options = {
+    size: 10,
+    scale: 1.5
+}
+
+optionSliders.forEach(slider =>
+    slider.addEventListener('input',
+        (event) => {
+            let { name, value } = event.currentTarget;
+            options[name] = value;
+        }
+    )
+);
 
 console.log(webcam, mainCanvas, faceCanvas, mainContext, faceContext, faceDetector);
 
@@ -61,22 +76,22 @@ const pixelateFace = ({ boundingBox: details }) => {
         details.height,
         details.x, // start of drawing x,y
         details.y,
-        SIZE,  //how wide?
-        SIZE,
+        options.size,  //how wide?
+        options.size,
 
     );
 
     let { width, height } = details;
-    width *= SCALE;
-    height *= SCALE;
+    width *= options.scale;
+    height *= options.scale;
 
     //draw a smaller face but scalling it up to create the  "pixelated" effect
     faceContext.drawImage(
         faceCanvas,
         details.x,
         details.y,
-        SIZE,
-        SIZE,
+        options.size,
+        options.size,
         details.x - (width - details.width) / 2,
         details.y - (height - details.height) / 2,
         width,
